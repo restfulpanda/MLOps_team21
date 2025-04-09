@@ -1,29 +1,24 @@
 import pandas as pd
 import pickle
-from sklearn.metrics import accuracy_score
-import os
+from sklearn.metrics import r2_score
 
 def test_model():
-    # загружаем модель
-    with open("model/model.pkl", "rb") as f:
+    # щагрузка модели
+    with open("model.pkl", "rb") as f:
         model = pickle.load(f)
 
-    # считываем данные
-    df_test = pd.read_csv("test/data_preprocessed.csv")
-    X_test = df_test.drop("target", axis=1)
-    y_test = df_test["target"]
+    # загрузка тестовых данных
+    df = pd.read_csv("test/preprocessed_test.csv")
+    X_test = df.drop(columns=["target"])
+    y_test = df["target"]
 
-    # предсказываем
+    # предсказания
     y_pred = model.predict(X_test)
 
-    # рассчитываем метрику
-    acc = accuracy_score(y_test, y_pred)
+    # метрика
+    r2 = r2_score(y_test, y_pred)
 
-    print(f"Test accuracy: {acc:.3f}")
-
-def main():
-    test_model()
+    print(f"Model test accuracy is: {r2:.4f}")
 
 if __name__ == "__main__":
-    main()
-    print("Model testing done.")
+    test_model()

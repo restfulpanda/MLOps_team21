@@ -1,30 +1,22 @@
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
 import pickle
-import os
+from sklearn.linear_model import LinearRegression
 
 def train_model():
-    # считываем данные
-    df_train = pd.read_csv("train/data_preprocessed.csv")
+    # загрузка предобработанных данных
+    df = pd.read_csv("train/preprocessed_train.csv")
+    X = df.drop(columns=["target"])
+    y = df["target"]
 
-    # Разделяем их
-    X_train = df_train.drop("target", axis=1)
-    y_train = df_train["target"]
+    # обучение модели
+    model = LinearRegression()
+    model.fit(X, y)
 
-    # Испольуем логистическую регрессию
-    model = LogisticRegression()
-    model.fit(X_train, y_train)
-
-    # Сохраним всё
-    if not os.path.exists("model"):
-        os.makedirs("model")
-
-    with open("model/model.pkl", "wb") as f:
+    # сохраним модель
+    with open("model.pkl", "wb") as f:
         pickle.dump(model, f)
 
-def main():
-    train_model()
+    print("Модель обучена и сохранена")
 
 if __name__ == "__main__":
-    main()
-    print("Model training done.")
+    train_model()

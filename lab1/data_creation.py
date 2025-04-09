@@ -1,29 +1,36 @@
-import numpy as np
-import pandas as pd
 import os
+import pandas as pd
+from sklearn.datasets import make_regression
+from sklearn.model_selection import train_test_split
 
-def create_data():
-    # Сгенерируем случайные данные
-    X = np.random.randn(100, 3)  
-    y = np.random.randint(0, 2, size=100)  # Два класса: 0 или 1
+def create_regression_data():
+    # Сгенерируем данные 8 признаков, 1 целевая переменная
+    X, y = make_regression(
+        n_samples=1000,
+        n_features=8,
+        noise=15.0,          #немного шума
+        random_state=42
+    )
 
-    df = pd.DataFrame(X, columns=["feature1", "feature2", "feature3"])
-    df["target"] = y
+    # Разделим данные
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-    # Разделим их
-    df_train = df.iloc[:80]
-    df_test = df.iloc[80:]
+    # создадим датафреймы
+    train_df = pd.DataFrame(X_train, columns=[f"feature{i}" for i in range(1, 9)])
+    train_df["target"] = y_train
 
-    # Создадим для них папки
-    if not os.path.exists("train"):
-        os.makedirs("train")
-    if not os.path.exists("test"):
-        os.makedirs("test")
+    test_df = pd.DataFrame(X_test, columns=[f"feature{i}" for i in range(1, 9)])
+    test_df["target"] = y_test
 
-    # Сохраним
-    df_train.to_csv("train/data.csv", index=False)
-    df_test.to_csv("test/data.csv", index=False)
+    # создадим папки
+    os.makedirs("train", exist_ok=True)
+    os.makedirs("test", exist_ok=True)
+
+    # сохраним
+    train_df.to_csv("train/train_data.csv", index=False)
+    test_df.to_csv("test/test_data.csv", index=False)
+
+    print("Данные успешно созданы и сохранены")
 
 if __name__ == "__main__":
-    create_data()
-    print("Data creation done.")
+    create_regression_data()

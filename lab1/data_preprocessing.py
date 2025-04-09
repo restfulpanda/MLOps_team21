@@ -1,30 +1,29 @@
 import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler
 import os
+from sklearn.preprocessing import StandardScaler
 
-def preprocess_data(input_path, output_path):
-    df = pd.read_csv(input_path)
+def preprocess_data():
+    # загрузка данных
+    train_df = pd.read_csv("train/train_data.csv")
+    test_df = pd.read_csv("test/test_data.csv")
 
-    # Отделяем признаки и переменную-таргет
-    X = df.drop("target", axis=1)
-    y = df["target"]
+    # разделим прзнаки и целевую переменную
+    X_train = train_df.drop(columns=["target"])
+    y_train = train_df["target"]
 
-    # Масштабируем признаки
+    X_test = test_df.drop(columns=["target"])
+    y_test = test_df["target"]
+
+    # масштабируем признаки
     scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
 
-    # Обратно скаладыаем признаки и тарегет
-    df_processed = pd.DataFrame(X_scaled, columns=X.columns)
-    df_processed["target"] = y
+    # сохраним обратно
+    pd.DataFrame(X_train_scaled, columns=X_train.columns).assign(target=y_train).to_csv("train/preprocessed_train.csv", index=False)
+    pd.DataFrame(X_test_scaled, columns=X_test.columns).assign(target=y_test).to_csv("test/preprocessed_test.csv", index=False)
 
-    # Сохраняем
-    df_processed.to_csv(output_path, index=False)
-
-def main():
-    preprocess_data("train/data.csv", "train/data_preprocessed.csv")
-    preprocess_data("test/data.csv", "test/data_preprocessed.csv")
+    print("Данные успешно предобработаны и сохранены.")
 
 if __name__ == "__main__":
-    main()
-    print("Data preprocessing done.")
+    preprocess_data()
