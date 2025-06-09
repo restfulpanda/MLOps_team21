@@ -3,7 +3,16 @@ pipeline {
 
   stages {
     stage('Checkout') {
-      steps { checkout scm }
+      steps {
+        checkout([
+          $class: 'GitSCM',
+          branches: [[name: '*/main']],
+          userRemoteConfigs: [[
+            url: 'git@github.com:msrbl/MLOps_team21.git',
+            credentialsId: 'github-jenkins-key'
+          ]]
+        ])
+      }
     }
 
     stage('Setup Python venv') {
@@ -17,16 +26,30 @@ pipeline {
       }
     }
 
-    stage('Download data') {
-      steps {
-        sh '. venv/bin/activate && python lab2/src/01_download.py'
-      }
+    stage('Download data')   {
+      steps { sh '. venv/bin/activate && python lab2/src/download_data.py' }
+    }
+
+    stage('Preprocess data') {
+      steps { sh '. venv/bin/activate && python lab2/src/preprocess_data.py' }
+    }
+
+    stage('Train model')     {
+      steps { sh '. venv/bin/activate && python lab2/src/model_training.py' }
+    }
+
+    stage('Evaluate')        {
+      steps { sh '. venv/bin/activate && python lab2/src/test_model.py' }
     }
   }
 
   post {
+    success {
+      archiveArtifacts artifacts: 'lab2/models/model.pkl', fingerprint: true
+      archiveArtifacts artifacts: 'lab2/reports/metrics.json', fingerprint: true
+    }
     always {
-      archiveArtifacts artifacts: 'lab2/data/**/*', fingerprint: true
+      archiveArtifacts artifacts: 'lab2/data/processed/**/*', fingerprint: true
     }
   }
 }
