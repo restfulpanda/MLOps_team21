@@ -1,0 +1,32 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Setup Python venv') {
+      steps {
+        sh '''
+          python3 -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip
+          pip install -r lab2/requirements.txt
+        '''
+      }
+    }
+
+    stage('Download data') {
+      steps {
+        sh '. venv/bin/activate && python lab2/src/01_download.py'
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'lab2/data/**/*', fingerprint: true
+    }
+  }
+}
