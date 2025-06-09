@@ -8,6 +8,8 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 from config import PROC_DATA_DIR, MODEL_PATH, REPORT_DIR
 
+REPORT_DIR.mkdir(exist_ok=True)
+
 def main():
     model = joblib.load(MODEL_PATH)
 

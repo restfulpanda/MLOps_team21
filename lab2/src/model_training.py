@@ -6,6 +6,9 @@ from sklearn.ensemble import RandomForestRegressor
 
 from config import PROC_DATA_DIR, MODEL_DIR
 
+PROC_DATA_DIR.mkdir(exist_ok=True)
+MODEL_DIR.mkdir(exist_ok=True)
+
 def main():
     X_train = pd.read_csv(PROC_DATA_DIR / "X_train.csv")
     y_train = pd.read_csv(PROC_DATA_DIR / "y_train.csv").squeeze()
