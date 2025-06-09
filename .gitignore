@@ -3,7 +3,3 @@ target
 *.iml
 **/*.iml
 **/.env
-
-models/*
-data/*
-reports/*
