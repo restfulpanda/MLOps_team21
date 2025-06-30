@@ -1,7 +1,7 @@
 # Practices for MLops course UrFU + SkillFactory
 ## Final Task Repository:
 
-[Link](https://github.com/msrbl/MLOps_team21_final)
+[Link](https://github.com/restfulpanda/MLOps_team21_final)
 
 ## Module 1
 <details>
